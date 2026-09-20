@@ -170,6 +170,15 @@ NODE_USE_ENV_PROXY=1 node src/xxx.ts
 
 ## 文件
 
+本 repo 自己的文件分兩套，**寫 question 前先讀 agent 版**：
+
+| 路徑 | 給誰 | 內容 |
+| --- | --- | --- |
+| `docs/` | 人類 | 簡潔摘要，不含數據細節 |
+| `docs/agents/` | agent | 完整脈絡：API 簽章、實測數據、反模式、檢查清單、尚未驗證的項目 |
+
+- `docs/primitives.md` ／ `docs/agents/primitives.md` —— Choice / Noul / Score
+
 TypeSafe 的線上文件是唯一事實來源，寫整合前先讀：
 
 - 索引：https://docs.typesafe.ai/llms.txt
