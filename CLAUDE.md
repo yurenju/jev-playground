@@ -112,6 +112,25 @@ TypeSafe 的線上文件是唯一事實來源，寫整合前先讀：
 - 頁面網址後面加 `.md` 可以拿到 Markdown，例如 https://docs.typesafe.ai/primitives/choice.md
 - 常用：`concepts/system-one.md`、`state.md`、`primitives.md`、`confidence.md`、`sdk/javascript.md`
 
-> 目前這個遠端容器的 egress proxy **擋住 `docs.typesafe.ai`**。
-> 讀不到文件時，改看 `node_modules/@typesafe-ai/sdk/dist/index.d.mts` 的型別定義，
+> `docs.typesafe.ai` 需要在 cloud environment 的網路白名單裡才連得到。
+> 真的讀不到時，改看 `node_modules/@typesafe-ai/sdk/dist/index.d.mts` 的型別定義，
 > 並且明講「沒讀到線上文件」，不要自行編造與版本相關的細節。
+
+## Skill 來源
+
+`.claude/skills/typesafe-ai/` 是從上游 vendored 進來的，不是自己寫的：
+
+- 來源：https://github.com/typesafe-ai/skills（`skills/typesafe-ai/`）
+- 版本：plugin `typesafe@typesafe-ai` v0.5.7，內容與上游逐字相同
+- 一併保留上游的 MIT `LICENSE`
+
+之所以直接放檔案而不是用 plugin marketplace，是因為實測確認過：
+在 `.claude/settings.json` 宣告 `extraKnownMarketplaces` / `enabledPlugins`
+**不會**讓全新的 cloud session 自動完成安裝。
+
+要更新時直接覆蓋 `SKILL.md`（別順手改內容，才能保持可比對）：
+
+```sh
+curl -sS -o .claude/skills/typesafe-ai/SKILL.md \
+  https://raw.githubusercontent.com/typesafe-ai/skills/main/skills/typesafe-ai/SKILL.md
+```
