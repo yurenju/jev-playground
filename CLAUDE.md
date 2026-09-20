@@ -8,7 +8,8 @@
 
 ## 執行環境
 
-- **Node.js 24 以上**，直接執行 TypeScript：`node src/foo.ts`
+- **Node.js 22.18 以上**，直接執行 TypeScript：`node src/foo.ts`
+  - type stripping 從 22.18 起預設開啟，不需要任何 flag（22.6～22.17 要加 `--experimental-strip-types`）
 - 使用 Node 內建的 **type stripping**（型別剝離），**不編譯、不裝 ts-node / tsx / esbuild**
 - ESM only：`package.json` 要有 `"type": "module"`
 - TypeScript 只拿來做**型別檢查**（`tsc --noEmit`），不產出 JS
@@ -24,9 +25,10 @@ Node 的 type stripping 只會把型別語法「抹掉」，不會做任何轉�
 - `tsconfig.json` 請開 `erasableSyntaxOnly`、`verbatimModuleSyntax`、`allowImportingTsExtensions`、`noEmit`，
   `module` / `moduleResolution` 用 `nodenext`，這樣型別檢查會直接擋掉不能剝離的語法
 
-> 這個遠端容器目前是 Node v22.22，type stripping 從 22.18 起已預設開啟，
-> 所以 `node foo.ts` 在容器裡也能直接跑，而且上述限制（enum、副檔名）的行為與 Node 24 一致，
-> 可以直接用來驗證。真正跑不動 `.ts` 的是容器內的 node20 / node21。
+> 這些限制在 Node 22 / 24 / 26 的行為一致，所以在 Node 22 上驗證過的 code 往上跑也沒問題。
+>
+> **不要拿 `bun` 來驗證。** Bun 有完整 transpile，`enum` 跑得動、import 省略副檔名也可以，
+> 在 Bun 下過的 code 丟到 `node` 可能直接失敗。要跑就用 `node`。
 
 ## TypeSafe SDK
 
@@ -98,7 +100,7 @@ usage;                          // input_tokens / output_tokens
 ## 常用指令
 
 ```sh
-node src/xxx.ts        # 直接跑（Node 24+）
+node src/xxx.ts        # 直接跑（Node 22.18+）
 npx tsc --noEmit       # 型別檢查
 ```
 
