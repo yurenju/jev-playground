@@ -177,7 +177,10 @@ NODE_USE_ENV_PROXY=1 node src/xxx.ts
 | `docs/<主題>.md` | 人類 | 快速理解結論與怎麼選 |
 | `docs/agents/<主題>.md` | agent | 帶著完整證據動手做事 |
 
-現有：`primitives.md`（Choice / Noul / Score）
+現有主題：
+
+- `primitives.md` —— Choice / Noul / Score
+- `batching.md` —— 多筆資料要逐筆送還是批次送、一批放幾筆
 
 **動手設計 question 前先讀 agent 版。**
 
