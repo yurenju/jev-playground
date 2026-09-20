@@ -1,0 +1,17 @@
+{
+  "name": "jev-playground",
+  "private": true,
+  "type": "module",
+  "description": "測試 TypeSafe System One 模型 Jev 的實驗場",
+  "scripts": {
+    "smoke": "NODE_USE_ENV_PROXY=1 node src/smoke.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@typesafe-ai/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^7.0.2"
+  }
+}

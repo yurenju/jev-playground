@@ -36,14 +36,36 @@ Node 的 type stripping 只會把型別語法「抹掉」，不會做任何轉�
 npm install @typesafe-ai/sdk
 ```
 
-環境變數（放 `.env`，**絕對不要 commit**）：
+環境變數（放 `.env`，已被 `.gitignore` 擋住，**絕對不要 commit**）：
 
 | 變數 | 說明 |
 | --- | --- |
 | `TYPESAFE_API_KEY` | 必填 |
 | `TYPESAFE_BASE_URL` | 預設 `https://api.typesafe.ai` |
 | `TYPESAFE_DEFAULT_MODEL` | 預設 `jev-latest` |
-| `TYPESAFE_LOG_LEVEL` | 預設 `warn`；除錯時設 `debug`（會印出 body） |
+| `TYPESAFE_LOG_LEVEL` | 預設 `warn`；除錯時設 `debug`（會印出完整 request body） |
+
+### 在 Claude Code cloud session 裡跑（兩個必踩的坑）
+
+**1. 一定要設 `NODE_USE_ENV_PROXY=1`。**
+Node 的 `fetch` 預設不理 `HTTPS_PROXY`，不設的話 SDK 會失敗，而且錯誤訊息會誤導：
+
+```
+403 Host not in allowlist: api.typesafe.ai
+```
+
+這時候**不要**跑去改網路白名單 —— 同一台機器上 `curl` 是通的（curl 會讀那個環境變數），
+問題只在 Node。`npm run smoke` 已經內建這個變數。
+
+**2. API key 由 proxy 注入時，SDK 仍然需要一個佔位值。**
+cloud environment 的 API credential 是在請求離開 VM 之後才由 proxy 加上 Authorization header，
+key 不會進到容器裡。但 `new TypeSafeClient()` 沒拿到 key 會直接 throw，所以還是要給它一個字串：
+
+```ts
+new TypeSafeClient({ apiKey: process.env.TYPESAFE_API_KEY ?? 'placeholder' });
+```
+
+值是什麼不重要 —— 實測帶一把明顯錯誤的 key 仍然回 200，證明 proxy 是**覆蓋**而非略過。
 
 最小範例：
 
@@ -100,8 +122,15 @@ usage;                          // input_tokens / output_tokens
 ## 常用指令
 
 ```sh
-node src/xxx.ts        # 直接跑（Node 22.18+）
-npx tsc --noEmit       # 型別檢查
+npm install
+npm run smoke          # 連線煙霧測試，會實際呼叫 Jev
+npm run typecheck      # tsc --noEmit
+```
+
+單獨跑某支檔案（記得帶 proxy 變數）：
+
+```sh
+NODE_USE_ENV_PROXY=1 node src/xxx.ts
 ```
 
 ## 文件
